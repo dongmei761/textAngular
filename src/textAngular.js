@@ -571,7 +571,30 @@ angular.module('textAngular.DOM', ['textAngular.factories'])
 				}
 			}
 			try{
+
 				$document[0].execCommand(command, showUI, options);
+                if(command=="insertImage"){
+                    var sel = window.getSelection();
+                    if (sel.rangeCount > 0) {
+                        var range = sel.getRangeAt(0);
+                        var node = range.startContainer;
+                        if (node.hasChildNodes() && range.startOffset > 0) {
+                            node = node.childNodes[range.startOffset - 1];
+                        }
+
+                        // Walk backwards through the DOM until we find an image
+                        while (node) {
+                            if (node.nodeType == 1 && node.tagName.toLowerCase()  == "img") {
+                                angular.element(node).attr({
+                                    "width":node.width,
+                                    "height":node.height
+                                });
+                                break;
+                            }
+                            node = previousNode(node);
+                        }
+                    }
+                }
 			}catch(e){}
 		};
 	};
